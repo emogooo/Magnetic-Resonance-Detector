@@ -1,5 +1,6 @@
 #include <LiquidCrystal.h>
-#include <AD9833.h>
+#include <MD_AD9833.h>
+#include <SPI.h>
 
 #define FSyncPin 12
 #define buttonRightPin 8
@@ -9,7 +10,8 @@
 #define wifiPin A1
 #define lowBatteryModePin A2
 
-AD9833 signalGenerator(FSyncPin);
+MD_AD9833	signalGenerator(FSyncPin);
+//MD_AD9833	signalGenerator(DataPin, ClkPin, FSyncPin);
 LiquidCrystal lcd(7, 6, 5, 4, 3, 2);
 
 int menuVar;
@@ -20,6 +22,7 @@ double lastVoltage;
 byte batLevel[8];
 
 void setup() {
+  signalGenerator.begin();
   lcd.begin(20, 4);
   lcd.print("  DELTA ELEKTRONiK");
   lcd.setCursor(0, 2);
@@ -40,7 +43,6 @@ void setup() {
   lastVoltage = -1;
   wifiFlag = false;
   batLevel[0] = B01110;
-  signalGenerator.Begin();
 }
 
 void loop() {
@@ -90,12 +92,16 @@ void loop() {
     if (!menuFlag) {
       yaz("", 1);
       yaz(result, 2);
-      signalGenerator.ApplySignal(SINE_WAVE, REG0, getFrequency());
-      signalGenerator.EnableOutput(true);
+      //signalGenerator.ApplySignal(SINE_WAVE, REG0, getFrequency());
+      //signalGenerator.EnableOutput(true);
+      signalGenerator.setMode(MD_AD9833::MODE_SINE);
+      signalGenerator.setActiveFrequency(MD_AD9833::CHAN_0);
+      signalGenerator.setFrequency(MD_AD9833::CHAN_0, getFrequency());
     } else {
+      signalGenerator.setMode(MD_AD9833::MODE_OFF);
       yaz("", 2);
       yaz("Seciniz " + result, 2);
-      signalGenerator.EnableOutput(false);
+      //signalGenerator.EnableOutput(false);
     }
     delay(250);
   }
@@ -123,21 +129,21 @@ String getMenuString() {
 
 int getFrequency() {
   if (menuVar == 1) {
-    return 1;
+    return 1000;
   } else if (menuVar == 2) {
-    return 2;
+    return 2000;
   } else if (menuVar == 3) {
-    return 3;
+    return 3000;
   } else if (menuVar == 4) {
-    return 4;
+    return 4000;
   } else if (menuVar == 5) {
-    return 5;
+    return 5000;
   } else if (menuVar == 6) {
-    return 6;
+    return 6000;
   } else if (menuVar == 7) {
-    return 7;
+    return 7000;
   } else if (menuVar == 8) {
-    return 8;
+    return 8000;
   }
 }
 
