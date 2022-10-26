@@ -2,7 +2,7 @@
 #include <MD_AD9833.h>
 #include <SPI.h>
 
-#define FSyncPin 12
+//#define FSyncPin 12
 #define buttonRightPin 8
 #define buttonEnterPin 9
 #define buttonLeftPin 10
@@ -10,7 +10,7 @@
 #define wifiPin A1
 #define lowBatteryModePin A2
 
-MD_AD9833	signalGenerator(FSyncPin);
+//MD_AD9833	signalGenerator(FSyncPin);
 //MD_AD9833	signalGenerator(DataPin, ClkPin, FSyncPin);
 LiquidCrystal lcd(7, 6, 5, 4, 3, 2);
 
@@ -22,7 +22,7 @@ double lastVoltage;
 byte batLevel[8];
 
 void setup() {
-  signalGenerator.begin();
+  //signalGenerator.begin();
   lcd.begin(20, 4);
   lcd.print("  DELTA ELEKTRONiK");
   lcd.setCursor(0, 2);
@@ -43,6 +43,7 @@ void setup() {
   lastVoltage = -1;
   wifiFlag = false;
   batLevel[0] = B01110;
+  batLevel[7] = B11111;
 }
 
 void loop() {
@@ -92,16 +93,13 @@ void loop() {
     if (!menuFlag) {
       yaz("", 1);
       yaz(result, 2);
-      //signalGenerator.ApplySignal(SINE_WAVE, REG0, getFrequency());
-      //signalGenerator.EnableOutput(true);
-      signalGenerator.setMode(MD_AD9833::MODE_SINE);
-      signalGenerator.setActiveFrequency(MD_AD9833::CHAN_0);
-      signalGenerator.setFrequency(MD_AD9833::CHAN_0, getFrequency());
+      //signalGenerator.setMode(MD_AD9833::MODE_SINE);
+      //signalGenerator.setActiveFrequency(MD_AD9833::CHAN_0);
+      //signalGenerator.setFrequency(MD_AD9833::CHAN_0, getFrequency());
     } else {
-      signalGenerator.setMode(MD_AD9833::MODE_OFF);
+      //signalGenerator.setMode(MD_AD9833::MODE_OFF);
       yaz("", 2);
       yaz("Seciniz " + result, 2);
-      //signalGenerator.EnableOutput(false);
     }
     delay(250);
   }
@@ -165,19 +163,6 @@ void solaYaz(String yazi, byte satir) {
   lcd.print(yazi);
 }
 
-double getVoltage() {
-  int x = random(0, 3);
-  if (x == 0) {
-    return 11.59;
-  } else if (x == 1) {
-    return 12.76;
-  } else if (x == 2) {
-    return 11.88;
-  } else {
-    return 12.37;
-  }
-}
-
 void batterylevel(double curvolt) {
   if (curvolt <= 4.2 && curvolt > 4.0) {
     batLevel[1] = B11111;
@@ -186,7 +171,6 @@ void batterylevel(double curvolt) {
     batLevel[4] = B11111;
     batLevel[5] = B11111;
     batLevel[6] = B11111;
-    batLevel[7] = B11111;
   }
   if (curvolt <= 4.0 && curvolt > 3.8) {
     batLevel[1] = B10001;
@@ -195,7 +179,6 @@ void batterylevel(double curvolt) {
     batLevel[4] = B11111;
     batLevel[5] = B11111;
     batLevel[6] = B11111;
-    batLevel[7] = B11111;
   }
   if (curvolt <= 3.8 && curvolt > 3.6) {
     batLevel[1] = B10001;
@@ -204,7 +187,6 @@ void batterylevel(double curvolt) {
     batLevel[4] = B11111;
     batLevel[5] = B11111;
     batLevel[6] = B11111;
-    batLevel[7] = B11111;
   }
   if (curvolt <= 3.6 && curvolt > 3.4) {
     batLevel[1] = B10001;
@@ -213,7 +195,6 @@ void batterylevel(double curvolt) {
     batLevel[4] = B11111;
     batLevel[5] = B11111;
     batLevel[6] = B11111;
-    batLevel[7] = B11111;
   }
   if (curvolt <= 3.4 && curvolt > 3.2) {
     batLevel[1] = B10001;
@@ -222,7 +203,6 @@ void batterylevel(double curvolt) {
     batLevel[4] = B10001;
     batLevel[5] = B11111;
     batLevel[6] = B11111;
-    batLevel[7] = B11111;
   }
   if (curvolt <= 3.2 && curvolt > 3.0) {
     batLevel[1] = B10001;
@@ -231,7 +211,6 @@ void batterylevel(double curvolt) {
     batLevel[4] = B10001;
     batLevel[5] = B10001;
     batLevel[6] = B11111;
-    batLevel[7] = B11111;
   }
   if (curvolt < 3.0) {
     batLevel[1] = B10001;
@@ -240,7 +219,6 @@ void batterylevel(double curvolt) {
     batLevel[4] = B10001;
     batLevel[5] = B10001;
     batLevel[6] = B10001;
-    batLevel[7] = B11111;
   }
   lcd.createChar(0, batLevel);
   lcd.setCursor(0, 3);
